@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation"
+			value="classpath:hiber.cfg.xml">
+		</property>
+	</bean>
+	
+	     <!-- add hibernate using hibernatetemplate -->
+	     
+	     
+	<bean id="ht" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	  <!-- add the sessionfactory object to hibernate template -->
+	   <property name="sessionFactory">
+	    <ref bean="sessionFactory"/>
+	   </property>
+	</bean>
+	
+	
+	<bean id="supplierdao" class="com.i.dao.impl.SupplierDaoImple">
+	<constructor-arg>
+	<ref bean="ht"></ref>
+	</constructor-arg>
+	</bean>
+	
+	<bean class="com.i.dao.impl.SupplierDaoPageImple"  id="supplierPageDAO">
+	<constructor-arg>
+	<ref bean="ht"/>
+    </constructor-arg>
+	</bean>
+	
+	<bean id="supplierService" class="com.i.service.impl.SupplierServiceImpl">
+		<constructor-arg>
+			<ref bean="supplierdao"/>
+		</constructor-arg>
+	</bean>
+	<bean id="supplierPageService" class="com.i.service.impl.SupplierPageServiceImpl">
+		<constructor-arg>
+			<ref bean="supplierPageDAO"/>
+		</constructor-arg>
+	</bean>
+	
+	
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+			
+			<prop key="/supplierlist.htm">
+				supplierListController
+				</prop>
+				<prop key="/supplierpage.htm">
+				supplierPageFormController
+				</prop>
+				<prop key="/viewsupplier.htm">
+				supplierViewController
+				</prop>
+				 <prop key="/editsupplier.htm">
+				editSupplierFormController
+				</prop> 
+				<prop key="/delsupplier.htm">
+				deleteSupplierController
+				</prop>
+				<prop key="/supplierhistorylist.htm">
+				supplierHistoryListController
+				</prop>
+				
+				</props>
+				</property>
+				</bean>
+				
+				<bean class="com.cis.ui.controllers.supplier.AddSupplierFormController" id="addSupplierForm">
+		<property name="formView">
+			<value>WEB-INF/Supplier/insertsupplier</value>
+		</property>
+		<property name="commandName">
+			<value>addSupplier</value>
+		</property>
+		<property name="commandClass">
+			<value>com.cis.ui.controllers.supplier.SupplierForm</value>
+		</property>
+		<!-- <property name="validator">
+			<ref bean="employeeValidator"/>
+		</property> -->
+		<property name="supplierService"><ref bean="supplierService"/></property>
+	</bean>
+	
+	 <bean class="com.cis.ui.controllers.supplier.EditSupplierFormController" id="editSupplierFormController">
+		<property name="formView">
+			<value>WEB-INF/Supplier/editsupplier</value>
+		</property>
+		<property name="commandName">
+			<value>editSupplier</value>
+		</property>
+		<property name="commandClass">
+			<value>com.cis.ui.controllers.supplier.SupplierForm</value>
+		</property>
+		<property name="supplierService"><ref bean="supplierService"/></property>
+	</bean> 
+	
+	<bean class="com.i.controllers.supplier.SupplierPageFormController" id="supplierPageFormController">
+		<property name="formView">
+			<value>WEB-INF/Supplier/supplierpage</value>
+		</property>
+		<property name="commandName">
+			<value>supplierPage</value>
+		</property>
+		<property name="commandClass">
+			<value>com.i.controllers.supplier.SupplierPageForm</value>
+		</property>
+		<property name="supplierPageService"><ref bean="supplierPageService"/></property>
+	</bean> 
+	
+	<bean class="com.i.controllers.supplier.SupplierViewController" id="supplierViewController">
+		
+		<property name="supplierService">
+			<ref bean="supplierService"/>
+		</property>
+	</bean>
+	<bean class="com.i.controllers.supplier.DeleteSupplierController" id="deleteSupplierController">
+		<property name="supplierDao">
+			<ref bean="supplierDao"/>
+		</property>
+	</bean>
+	
+	<bean class="com.i.controllers.supplier.SupplierListController" id="supplierListController">
+		 <property name="supplierService">
+			<ref bean="supplierService"/>
+		</property>
+	</bean>
+				
+				
+				
+				
+	
+	
+	
+
+</beans>
